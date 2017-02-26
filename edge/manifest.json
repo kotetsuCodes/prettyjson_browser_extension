@@ -26,7 +26,6 @@
   ],
   "content_security_policy": "script-src 'self' 'cdn.rawgit.com'",
 
-
   "permissions": [
     "activeTab",
     "tabs",
