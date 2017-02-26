@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "Boilerplate",
+  "version": "1.0",
+  "author": "CB",
+  "description": "Boilerplate extension",
+  "icons": {
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/*"
+      ],
+      "js": [
+        "content_scripts/boilerplate.js"
+      ]
+    }
+  ],
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": true
+  }
+}
