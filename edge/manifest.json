@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Boilerplate",
+  "name": "PrettyJSON",
   "version": "1.0",
   "author": "CB",
-  "description": "Boilerplate extension",
+  "description": "Extension for prettifying application/json responses",
   "icons": {
   },
   "content_scripts": [
@@ -12,13 +12,25 @@
         "*://*/*"
       ],
       "js": [
-        "content_scripts/boilerplate.js"
+        "content_scripts/pretty_json.js",
+        "prettify.js",
+        "runPrettify.js"
       ]
     }
   ],
+  "web_accessible_resources": [
+    "https://cdn.rawgit.com/google/code-prettify/master/loader/prettify.css",
+    "https://cdn.rawgit.com/google/code-prettify/master/loader/prettify.js",
+    "prettify.js",
+    "runPrettify.js"
+  ],
+  "content_security_policy": "script-src 'self' 'cdn.rawgit.com'",
+
+
   "permissions": [
     "activeTab",
     "tabs",
+    "webRequest",
     "<all_urls>"
   ],
   "background": {

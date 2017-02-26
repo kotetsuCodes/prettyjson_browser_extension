@@ -1,34 +1,58 @@
 /**
  * Created by carl on 2/25/2017.
  */
-console.log('background page loaded...');
 
 var browser = (typeof(browser) == 'undefined') ? chrome : browser;
 
-function completedRequestCallback(details) {
-    console.log('completed request callback running...');
-    browser.tabs.sendMessage(details.tabId, {requestDetails: details}, function (response) {
+var tabQueue = [{}];
+
+function requestCompletedCallback(responseDetails) {
+    console.log(responseDetails);
+    var contentTypeIndex = responseDetails.responseHeaders.findIndex(function (x) {
+        return x.name === 'Content-Type' && x.value.indexOf('application/json') > -1;
     });
 
+    if (contentTypeIndex > -1) {
+        console.log(contentTypeIndex);
+        browser.tabs.get(responseDetails.tabId, function (tabInfo) {
+            console.log(tabInfo);
+
+            if (responseDetails.url === tabInfo.url) {
+                console.log('responseDetails.url === tabInfo.url');
+
+                var tabIndex = tabQueue.findIndex(function (x) {
+                    return x.tabId === tabInfo.id;
+                });
+                if (tabIndex > -1) {
+                    tabQueue[tabIndex]['responseDetails'] = responseDetails;
+                } else {
+                    tabQueue.push({tabId: responseDetails.tabId, responseDetails: responseDetails});
+                }
+            }
+        });
+    }
 }
 
-browser.webRequest.onCompleted.addListener(completedRequestCallback, {urls: ['<all_urls>']});
+
+try {
+    browser.webRequest.onCompleted.addListener(requestCompletedCallback, {urls: ['<all_urls>']}, ['responseHeaders']);
+} catch (error) {
+    console.error(error);
+}
 
 browser.tabs.onUpdated.addListener(function (tabId, info) {
-    console.log(tabId);
     if (info.status == "complete") {
-        // your code ...
-
-        console.log(browser.webRequest.onCompleted.hasListener(completedRequestCallback));
+        var tabIndex = tabQueue.findIndex(function (x) {
+            return x.tabId === tabId;
+        });
+        if (tabIndex > -1) {
+            browser.tabs.sendMessage(tabId, {response: tabQueue[tabIndex].responseDetails});
+        }
     }
-});
+})
 
-
-// try {
-//     browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-//         console.log(request);
-//     });
-// } catch (error) {
-//     console.log(error);
-// }
-
+// browser.tabs.onUpdated.addListener(function(tabId , info) {
+//     if (info.status == "complete") {
+//         // your code ...
+//     }
+// });

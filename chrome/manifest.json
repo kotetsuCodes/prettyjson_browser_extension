@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "ipView",
+  "name": "PrettyJSON",
   "version": "1.0",
   "author": "CB",
-  "description": "Displays IP Address of current website",
+  "description": "Extension for prettifying application/json responses",
   "icons": {
   },
   "content_scripts": [
@@ -12,14 +12,19 @@
         "*://*/*"
       ],
       "js": [
-        "content_scripts/ipView.js"
+        "content_scripts/pretty_json.js"
       ]
     }
   ],
+  "web_accessible_resources": [
+    "https://cdn.rawgit.com/google/code-prettify/master/loader/prettify.css",
+    "https://cdn.rawgit.com/google/code-prettify/master/loader/prettify.js"
+  ],
+
   "permissions": [
     "activeTab",
-    "webRequest",
     "tabs",
+    "webRequest",
     "<all_urls>"
   ],
   "background": {
